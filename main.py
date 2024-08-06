@@ -1,8 +1,7 @@
 # Import libraries
 import tkinter as tk
 from tkinter.filedialog import askopenfilename, askdirectory
-import os
-from PIL import Image
+import os, subprocess, platform
 from datetime import datetime
 import Recipe as rec
 import utils
@@ -36,7 +35,12 @@ def openRecipeViewer():
     # Declaring function for opening media
     def openMedia():
         for mediaFile in recipes[recipeIdx].media:
-            Image.open(mediaFile).show()
+            if platform.system() == 'Darwin':
+                subprocess.call(('open', mediaFile))
+            elif platform.system() == 'Windows':
+                os.startfile(mediaFile)
+            else:
+                subprocess.call(('xdg-open', mediaFile))
 
     # Title frame
     newFrame = tk.Frame(master = newWindow)
