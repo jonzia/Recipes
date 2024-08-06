@@ -409,13 +409,16 @@ def populateList():
         if fileName[0] == ".": 
             modifier = 1
             continue
-        # Get recipe name from file name
-        recipeName = fileName.split("_")[0]
-        versionNumber = fileName.split("_")[1].split(".")[0][1:]
-        # Load the recipe
-        recipes.append(utils.loadRecipe(recipeName, versionNumber, configuration.databaseDirectory))
-        # Add the recipe to the list box
-        listbox.insert(idx - modifier, recipes[idx - modifier].getFullName())
+        try:
+            # Get recipe name from file name
+            recipeName = fileName.split("_")[0]
+            versionNumber = fileName.split("_")[1].split(".")[0][1:]
+            # Load the recipe
+            recipes.append(utils.loadRecipe(recipeName, versionNumber, configuration.databaseDirectory))
+            # Add the recipe to the list box
+            listbox.insert(idx - modifier, recipes[idx - modifier].getFullName())
+        except:
+            continue
 
 # Delete the selected recipe
 def deleteRecipe():
