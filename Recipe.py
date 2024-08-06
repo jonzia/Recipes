@@ -114,8 +114,10 @@ class Recipe:
         else:
             return False
         
-    def getFilename(self):
-        return "database/" + self.name + "_v" + str(self.version) + ".pkl"
+    def getFilename(self, directory):
+        # baseDirectory = os.getcwd()
+        # databaseDirectory = os.path.join(baseDirectory, "database/")
+        return directory + self.name + "_v" + str(self.version) + ".pkl"
 
     def clear(self):
         self.name = "None"

@@ -1,6 +1,6 @@
 # Import libraries
 import tkinter as tk
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, askdirectory
 import os
 from PIL import Image
 from datetime import datetime
@@ -283,7 +283,7 @@ def openRecipeViewer():
             # Extract variables
             temp = temp[1].split(")")
             newName = temp[0]
-            oldFilename = recipes[idx].getFilename()
+            oldFilename = recipes[idx].getFilename(databaseDirectory)
             # Ensure no recipee will be overwritten
             for recipe in recipes:
                 if newName == recipe.name:
@@ -304,7 +304,7 @@ def openRecipeViewer():
             # Extract variables
             temp = temp[1].split(")")
             newVersion = int(temp[0])
-            oldFilename = recipes[idx].getFilename()
+            oldFilename = recipes[idx].getFilename(databaseDirectory)
             # Ensure no version will be overwritten
             for recipe in recipes:
                 if (recipe.name == recipes[idx].name) and (recipe.version == newVersion):
@@ -386,7 +386,7 @@ def populateList():
     listbox.delete(0, tk.END)
     recipes.clear()
     modifier = 0    # Accounting for .DS_store
-    for idx, fileName in enumerate(sorted(os.listdir("database"))):
+    for idx, fileName in enumerate(sorted(os.listdir(databaseDirectory))):
         # Ignore .DS_store if it exists
         if fileName[0] == ".": 
             modifier = 1
@@ -395,7 +395,7 @@ def populateList():
         recipeName = fileName.split("_")[0]
         versionNumber = fileName.split("_")[1].split(".")[0][1:]
         # Load the recipe
-        recipes.append(utils.loadRecipe(recipeName, versionNumber))
+        recipes.append(utils.loadRecipe(recipeName, versionNumber, databaseDirectory))
         # Add the recipe to the list box
         listbox.insert(idx - modifier, recipes[idx - modifier].getFullName())
 
@@ -404,6 +404,12 @@ def deleteRecipe():
     recipeIdx = listbox.curselection()[0]
     recipes[recipeIdx].deleteRecipe()
     populateList()
+
+# Base directory
+# baseDirectory = os.path.abspath(os.path.dirname(__file__))
+# databaseDirectory = os.path.join(baseDirectory, "database/")
+databaseDirectory = askdirectory()
+databaseDirectory = databaseDirectory + "/"
 
 # Initialize the GUI
 window = tk.Tk()
