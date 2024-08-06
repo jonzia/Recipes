@@ -6,4 +6,5 @@ class Unit(Enum):
     TABLESPOON = 'tbsp'
     TEASPOON = 'tsp'
     GRAM = 'grams'
+    COUNT = 'count'
     NULL = "null"

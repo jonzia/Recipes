@@ -19,7 +19,7 @@ def openNewRecipe():
             return
     # Otherwise, create new recipe and update list
     newRecipe = rec.Recipe("New Recipe", 1)
-    newRecipe.saveRecipe()
+    newRecipe.saveRecipe(databaseDirectory)
     populateList()
 
 # Handling view/edit recipe button selection
@@ -339,7 +339,7 @@ def openRecipeViewer():
         # Refresh user interface
         commandBox.delete("1.0", tk.END)
         commandBox.insert(tk.INSERT, ">> ")
-        recipes[idx].saveRecipe()
+        recipes[idx].saveRecipe(databaseDirectory)
         refreshRecipe()
 
     # Handling recipe refreshing after update
@@ -377,7 +377,7 @@ def createNewVersion():
             debugger.config(text = "Incremented version already exists: " + recipe.getFullName())
             return
     # Save the udpated recipe and update the list
-    newRecipe.saveRecipe()
+    newRecipe.saveRecipe(databaseDirectory)
     populateList()
 
 # Update the list of recipes
@@ -402,19 +402,19 @@ def populateList():
 # Delete the selected recipe
 def deleteRecipe():
     recipeIdx = listbox.curselection()[0]
-    recipes[recipeIdx].deleteRecipe()
+    recipes[recipeIdx].deleteRecipe(databaseDirectory)
     populateList()
+
+# Initialize the GUI
+window = tk.Tk()
+window.geometry("350x350")
+window.title("Recipe Book")
 
 # Base directory
 # baseDirectory = os.path.abspath(os.path.dirname(__file__))
 # databaseDirectory = os.path.join(baseDirectory, "database/")
 databaseDirectory = askdirectory()
 databaseDirectory = databaseDirectory + "/"
-
-# Initialize the GUI
-window = tk.Tk()
-window.geometry("350x350")
-window.title("Recipe Book")
 
 # GUI header
 frame1 = tk.Frame(master = window)

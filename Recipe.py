@@ -101,13 +101,13 @@ class Recipe:
         newVersion.version += 1
         return newVersion
 
-    def saveRecipe(self):
-        fileName = self.getFilename()
+    def saveRecipe(self, directory):
+        fileName = self.getFilename(directory)
         with open(fileName, 'wb') as file:
             pickle.dump(self, file)
 
-    def deleteRecipe(self):
-        fileName = self.getFilename()
+    def deleteRecipe(self, directory):
+        fileName = self.getFilename(directory)
         if os.path.exists(fileName):
             os.remove(fileName)
             return True
