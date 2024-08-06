@@ -1,6 +1,15 @@
 # Flavortown Recipe Compendium
 A simple recipe book applet in Python.
 
+## User Guide
+
+1. On initial launch, select database folder containing recipe files.
+2. To create a new recipe, press `New Reipce` in the main window. This will create a blank recipe which can be edited.
+3. To view a recipe, select a recipe in the main window and press `View/Edit`, which will launch the viewer window.
+4. To edit a recipe, select a recipe in the main window and press `View/Edit`. Recipes can be edited using the command prompt at the bottom of the viewer window. Available commands are listed in the command library below. Note that edits made outside of the command prompt will not be saved to the recipe.
+5. To create a new version of a recipe, press `New Version`, which will create a copy of the currently selected recipe with an incremented version number.
+6. To delete a recipe, select the recipe in the main window and press `Delete Recipe`.
+
 ## Command Library
 
 | Command | Syntax | Comment |
