@@ -6,6 +6,7 @@ from datetime import datetime
 import Recipe as rec
 import utils
 from Units import Unit as unit
+from UserConfig import UserConfig as uc
 
 # METHODS
 
@@ -18,7 +19,7 @@ def openNewRecipe():
             return
     # Otherwise, create new recipe and update list
     newRecipe = rec.Recipe("New Recipe", 1)
-    newRecipe.saveRecipe(databaseDirectory)
+    newRecipe.saveRecipe(configuration.databaseDirectory)
     populateList()
 
 # Handling view/edit recipe button selection
@@ -281,13 +282,26 @@ def openRecipeViewer():
                 debugger.config(text = "Invalid file selected: " + fileName)
                 return
             
+        # List linked image files
+        # >> lm()
+        elif command == "lm":
+            # List linked media
+            # If no linked media, print error, else print each file in a new line
+            if len(recipes[idx].media) < 1:
+                debugger.config(text = "No linked media files for " + recipes[idx].getFullName())
+            else:
+                temp = ""
+                for file in recipes[idx].media:
+                    temp += file + "\n"
+                    debugger.config(text = temp)
+            
         # Update recipe name
         # >> name(new name)
         elif command == "name":
             # Extract variables
             temp = temp[1].split(")")
             newName = temp[0]
-            oldFilename = recipes[idx].getFilename(databaseDirectory)
+            oldFilename = recipes[idx].getFilename(configuration.databaseDirectory)
             # Ensure no recipee will be overwritten
             for recipe in recipes:
                 if newName == recipe.name:
@@ -308,7 +322,7 @@ def openRecipeViewer():
             # Extract variables
             temp = temp[1].split(")")
             newVersion = int(temp[0])
-            oldFilename = recipes[idx].getFilename(databaseDirectory)
+            oldFilename = recipes[idx].getFilename(configuration.databaseDirectory)
             # Ensure no version will be overwritten
             for recipe in recipes:
                 if (recipe.name == recipes[idx].name) and (recipe.version == newVersion):
@@ -343,7 +357,7 @@ def openRecipeViewer():
         # Refresh user interface
         commandBox.delete("1.0", tk.END)
         commandBox.insert(tk.INSERT, ">> ")
-        recipes[idx].saveRecipe(databaseDirectory)
+        recipes[idx].saveRecipe(configuration.databaseDirectory)
         refreshRecipe()
 
     # Handling recipe refreshing after update
@@ -381,7 +395,7 @@ def createNewVersion():
             debugger.config(text = "Incremented version already exists: " + recipe.getFullName())
             return
     # Save the udpated recipe and update the list
-    newRecipe.saveRecipe(databaseDirectory)
+    newRecipe.saveRecipe(configuration.databaseDirectory)
     populateList()
 
 # Update the list of recipes
@@ -390,7 +404,7 @@ def populateList():
     listbox.delete(0, tk.END)
     recipes.clear()
     modifier = 0    # Accounting for .DS_store
-    for idx, fileName in enumerate(sorted(os.listdir(databaseDirectory))):
+    for idx, fileName in enumerate(sorted(os.listdir(configuration.databaseDirectory))):
         # Ignore .DS_store if it exists
         if fileName[0] == ".": 
             modifier = 1
@@ -399,14 +413,21 @@ def populateList():
         recipeName = fileName.split("_")[0]
         versionNumber = fileName.split("_")[1].split(".")[0][1:]
         # Load the recipe
-        recipes.append(utils.loadRecipe(recipeName, versionNumber, databaseDirectory))
+        recipes.append(utils.loadRecipe(recipeName, versionNumber, configuration.databaseDirectory))
         # Add the recipe to the list box
         listbox.insert(idx - modifier, recipes[idx - modifier].getFullName())
 
 # Delete the selected recipe
 def deleteRecipe():
     recipeIdx = listbox.curselection()[0]
-    recipes[recipeIdx].deleteRecipe(databaseDirectory)
+    recipes[recipeIdx].deleteRecipe(configuration.databaseDirectory)
+    populateList()
+
+# Set the database directory
+def setDatabaseDirectory():
+    databaseDirectory = askdirectory()
+    configuration.setDatabaseDirectory(databaseDirectory)
+    debugger.config(text = "Updated database directory: " + databaseDirectory)
     populateList()
 
 # Initialize the GUI
@@ -417,14 +438,20 @@ window.title("Recipe Book")
 # Base directory
 # baseDirectory = os.path.abspath(os.path.dirname(__file__))
 # databaseDirectory = os.path.join(baseDirectory, "database/")
-databaseDirectory = askdirectory()
-databaseDirectory = databaseDirectory + "/"
+# databaseDirectory = askdirectory()
+# databaseDirectory = databaseDirectory + "/"
+configuration = uc()
 
 # GUI header
 frame1 = tk.Frame(master = window)
 frame1.pack()
 titleText = tk.Label(master = frame1, text = "The Flavortown Compendium")
 titleText.pack()
+
+frame2 = tk.Frame(master = window)
+frame2.pack()
+selectDatabaseButton = tk.Button(master = frame2, text = "Recipe Directory", command = setDatabaseDirectory)
+selectDatabaseButton.pack()
 
 # Recipe list frame
 frame3 = tk.Frame(master = window)
@@ -453,7 +480,7 @@ newVersionButton.grid(row = 1, column = 1)
 # Debugger frame
 frame5 = tk.Frame(master = window)
 frame5.pack()
-debugger = tk.Label(master = frame5, text = "")
+debugger = tk.Message(master = frame5, text = "", width = 300)
 debugger.pack()
 
 # Run GUI
