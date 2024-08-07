@@ -354,6 +354,20 @@ def openRecipeViewer():
                 debugger.config(text = "Invalid date")
                 return
             
+        # Create file from recipe
+        # >> write(filename)
+        # Prompt user to select directory
+        elif command == "write":
+            directory = askdirectory()
+            directory += "/"
+            success = recipes[idx].write(directory)
+            # Return success if file exists
+            if success:
+                debugger.config(text = "Wrote file to: " + directory + recipes[idx].getFullName() + ".txt")
+            else:
+                debugger.config(text = "Unable to write file")
+                return
+            
         # Refresh user interface
         commandBox.delete("1.0", tk.END)
         commandBox.insert(tk.INSERT, ">> ")
