@@ -3,7 +3,7 @@ A simple recipe book applet in Python.
 
 ## User Guide
 
-1. On initial launch, select database folder containing recipe files.
+1. On launch, select database folder containing recipe files.
 2. To create a new recipe, press `New Reipce` in the main window. This will create a blank recipe which can be edited.
 3. To view a recipe, select a recipe in the main window and press `View/Edit`, which will launch the viewer window.
 4. To edit a recipe, select a recipe in the main window and press `View/Edit`. Recipes can be edited using the command prompt at the bottom of the viewer window. Available commands are listed in the command library below. Note that edits made outside of the command prompt will not be saved to the recipe.
@@ -24,8 +24,10 @@ A simple recipe book applet in Python.
 | Editing a note | `>> an(index, note)` | |
 | Adding an image file | `>> am()` | File selection prompt will appear |
 | Removing an image file | `>> rm()` | File selection prompt will appear |
+| List all image files | `>> lm()` | |
 | Update a recipe name | `>> name(newName)` | `newName` of type string |
 | Update a recipe version | `>> version(newVersion)` | `newVersion` of type int |
 | Update a recipe date | `>> date(year, month, day)` | `year`, `month`, `day` of type int |
+| Write recipe to file | `>> write()` | User will be prompted to select desstination folder |
 
 *Note that all indices start at 1, not 0, and are of type int.*
