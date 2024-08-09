@@ -356,8 +356,8 @@ def openRecipeViewer():
             
         # Create file from recipe
         # >> write(filename)
-        # Prompt user to select directory
         elif command == "write":
+            # Prompt user to select directory
             directory = askdirectory()
             directory += "/"
             success = recipes[idx].write(directory)
@@ -366,6 +366,87 @@ def openRecipeViewer():
                 debugger.config(text = "Wrote file to: " + directory + recipes[idx].getFullName() + ".txt")
             else:
                 debugger.config(text = "Unable to write file")
+                return
+            
+        # Compute the delta between two recipe versions
+        # >> delta(version)
+        elif command == "delta":
+            # Extract variables
+            temp = temp[1].split(")")
+            otherVersion = int(temp[0])
+            # Try to open the specified version for comparison
+            try:
+                temp = utils.loadRecipe(recipes[idx].name, otherVersion, configuration.databaseDirectory)
+            except:
+                debugger.config(text = "Unable to load version " + str(otherVersion))
+                return
+            # Ensure version number is appropritae
+            if otherVersion == recipes[idx].version:
+                debugger.config(text = "Unable to generate delta for the same recipe")
+                return
+            # Ensure older version is recipe1
+            recipe1 = temp
+            recipe2 = temp
+            if otherVersion > recipes[idx].version:
+                recipe1 = recipes[idx]
+            else:
+                recipe2 = recipes[idx]
+            # If able to load the recipe, start comparisons
+            # Prompt user to select directory
+            directory = askdirectory()
+            directory += "/"
+            file = open(directory + "delta.txt", 'w')
+            file.write("Delta\n\n")
+            file.write("Recipe 1: " + recipe1.getFullName() + "\n")
+            file.write("Recipe 2: " + recipe2.getFullName() + "\n\n")
+            file.write("Ingredients:\n")
+            # For each ingredient in the new recipe
+            for (key, value) in recipe2.ingredients.items():
+                # If the ingredient is in the old recipe
+                if key in recipe1.ingredients:
+                    # And the value is different
+                    if (value[0] != recipe1.ingredients[key][0]) or (value[1] != recipe1.ingredients[key][1]):
+                        # Print the update
+                        file.write(key + ": " + str(recipe1.ingredients[key][0]) + " " + recipe1.ingredients[key][1].value + " >> " + str(value[0]) + " " + value[1].value + "\n")
+                else:
+                    # If the ingredient is not in the old recipe, add it
+                    file.write("+ " + key + ": " + str(value[0]) + " " + value[1].value + "\n")
+            # For each ingredient in the old recipe
+            for (key, value) in recipe1.ingredients.items():
+                # If the ingredient is not in the new recipe
+                if key not in recipe2.ingredients:
+                    # Indicate that it was removed
+                    file.write("- " + key + ": " + str(value[0]) + " " + value[1].value + "\n")
+            file.write("\nInstructions:\n")
+            # If the new recipe has more instructions
+            if len(recipe2.instructions) > len(recipe1.instructions):
+                # For each instruction in the new recipe
+                for (indx, value) in enumerate(recipe2.instructions):
+                    # If the instruction is not the same as the old recipe
+                    try:
+                        if value != recipe1.instructions[indx]:
+                            # Indicate the change
+                            file.write(str(indx) + ". " + recipe1.instructions[indx] + "\n>> " + value + "\n")
+                    except:
+                        # If the instruction is not present in the old recipe, indicate the addition
+                        file.write("+ " + str(indx) + ". " + value + "\n")
+            else:
+                # If the old recipe has more instructions
+                # For each instruction in the old recipe
+                for (indx, value) in enumerate(recipe1.instructions):
+                    # If the instruction is not the same as the new recipe
+                    try:
+                        if value != recipe2.instructions[indx]:
+                            # Indicate the change
+                            file.write(str(indx) + ". " + value + "\n>> " + recipe2.instructions[indx] + "\n")
+                    except:
+                        # If the instruction is not present in the new recipe, indicate the removal
+                        file.write("- " + str(indx) + ". " + recipe1.instructions[indx] + "\n")
+            file.close()
+            if os.path.isfile(directory + "delta.txt"):
+                debugger.config(text = "Saved " + directory + "delta.txt")
+            else:
+                debugger.config(text = "Unable to write delta to file.")
                 return
             
         # Refresh user interface
