@@ -18,7 +18,7 @@ A simple recipe book applet in Python.
 | Removing an ingredient | `>> ri(index)` | |
 | Add an instruction | `ar(index , instruction)` |  `index = 0` to append new instruction, `instruction` of type string |
 | Removing an instruction | `>> rr(index)` | |
-| Editing an instruction | `>> ri(index, instruction)` | |
+| Editing an instruction | `>> er(index, instruction)` | |
 | Adding a note | `>> an(note)` | `note` of type string |
 | Removing a note | `>> rn(index)` | |
 | Editing a note | `>> an(index, note)` | |
@@ -29,5 +29,6 @@ A simple recipe book applet in Python.
 | Update a recipe version | `>> version(newVersion)` | `newVersion` of type int |
 | Update a recipe date | `>> date(year, month, day)` | `year`, `month`, `day` of type int |
 | Write recipe to file | `>> write()` | User will be prompted to select desstination folder |
+| Generate delta between versions | `>> delta(otherVersionNumber)` | Will generatae file of changes between versions |
 
 *Note that all indices start at 1, not 0, and are of type int.*
